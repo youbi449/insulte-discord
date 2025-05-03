@@ -1,0 +1,19 @@
+# Modules node
+node_modules/
+
+# Fichiers d'environnement
+.env
+
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# Données locales
+data/
+
+# Fichiers de configuration
+config.json
+
+# Dossiers de cache
+.cache/ 
