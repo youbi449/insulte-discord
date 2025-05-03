@@ -10,11 +10,9 @@
     "test": "jest"
   },
   "dependencies": {
-    "bad-words": "^3.0.4",
     "cross-fetch": "^4.1.0",
     "discord.js": "^14.14.1",
     "dotenv": "^16.3.1",
-    "french-badwords-list": "^1.0.7",
     "node-cron": "^3.0.3",
     "string-similarity": "^4.0.4"
   },
