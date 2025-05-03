@@ -185,6 +185,28 @@ function getMostInsulted(guildId, limit = 3) {
   return sorted;
 }
 
+/**
+ * Renvoie un tableau trié des utilisateurs qui insultent le plus (du plus au moins insultant)
+ * @param {string} guildId - L'ID du serveur
+ * @param {number} [limit=10] - Nombre d'utilisateurs à retourner (par défaut 10)
+ * @returns {Array<{insulter: string, count: number}>}
+ */
+function getMostInsulting(guildId, limit = 10) {
+  const guildData = getGuildData(guildId);
+  if (!guildData || !Array.isArray(guildData.offenses)) return [];
+  const countByInsulter = {};
+  for (const offense of guildData.offenses) {
+    if (!offense.offender) continue;
+    countByInsulter[offense.offender] = (countByInsulter[offense.offender] || 0) + 1;
+  }
+  // Transformer en tableau et trier
+  const sorted = Object.entries(countByInsulter)
+    .map(([insulter, count]) => ({ insulter, count }))
+    .sort((a, b) => b.count - a.count)
+    .slice(0, limit);
+  return sorted;
+}
+
 module.exports = {
   getGuildData,
   updateGuildData,
@@ -193,5 +215,6 @@ module.exports = {
   checkDailyIncrement,
   addCustomInsult,
   removeCustomInsult,
-  getMostInsulted
+  getMostInsulted,
+  getMostInsulting
 }; 
