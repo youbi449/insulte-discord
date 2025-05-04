@@ -1,47 +1,5 @@
-const { getMostInsulted, updateGuildData, getMostInsulting } = require('./dataManager');
+const { getMostInsulted, updateGuildData, getMostInsulting, resetPodium } = require('./dataManager');
 const { generateDailyReport } = require('./reportUtils');
-
-describe('getMostInsulted', () => {
-  const guildId = 'test-guild';
-  beforeEach(() => {
-    // On injecte des offenses fictives
-    updateGuildData(guildId, {
-      offenses: [
-        { offender: 'Alice', message: 'insulte1' },
-        { offender: 'Bob', message: 'insulte2' },
-        { offender: 'Alice', message: 'insulte3' },
-        { offender: 'Charlie', message: 'insulte4' },
-        { offender: 'Bob', message: 'insulte5' },
-        { offender: 'Alice', message: 'insulte6' },
-      ]
-    });
-  });
-
-  it('retourne le top 3 des plus insultés', () => {
-    const podium = getMostInsulted(guildId, 3);
-    expect(podium.length).toBe(3);
-    expect(podium[0]).toEqual({ offender: 'Alice', count: 3 });
-    expect(podium[1]).toEqual({ offender: 'Bob', count: 2 });
-    expect(podium[2]).toEqual({ offender: 'Charlie', count: 1 });
-  });
-
-  it('retourne moins de 3 si moins d\'utilisateurs', () => {
-    updateGuildData(guildId, {
-      offenses: [
-        { offender: 'Alice', message: 'insulte1' }
-      ]
-    });
-    const podium = getMostInsulted(guildId, 3);
-    expect(podium.length).toBe(1);
-    expect(podium[0]).toEqual({ offender: 'Alice', count: 1 });
-  });
-
-  it('retourne un tableau vide si aucune offense', () => {
-    updateGuildData(guildId, { offenses: [] });
-    const podium = getMostInsulted(guildId, 3);
-    expect(podium).toEqual([]);
-  });
-});
 
 describe('getMostInsulting', () => {
   const guildId = 'test-guild-insulting';
@@ -59,16 +17,16 @@ describe('getMostInsulting', () => {
   });
 
   it('retourne le top 2 des plus insultants', () => {
-    const classement = getMostInsulting(guildId, 2);
-    expect(classement.length).toBe(2);
-    expect(classement[0]).toEqual({ insulter: 'Alice', count: 3 });
-    expect(classement[1]).toEqual({ insulter: 'Bob', count: 2 });
+    const podium = getMostInsulting(guildId, 2);
+    expect(podium.length).toBe(2);
+    expect(podium[0]).toEqual({ insulter: 'Alice', count: 3 });
+    expect(podium[1]).toEqual({ insulter: 'Bob', count: 2 });
   });
 
   it('retourne un tableau vide si aucune offense', () => {
     updateGuildData(guildId, { offenses: [] });
-    const classement = getMostInsulting(guildId, 3);
-    expect(classement).toEqual([]);
+    const podium = getMostInsulting(guildId, 3);
+    expect(podium).toEqual([]);
   });
 });
 
@@ -121,7 +79,7 @@ describe('generateDailyReport', () => {
     expect(msg).toMatch(/podium/i);
   });
 
-  it('affiche le message positif si personne insulté', () => {
+  it('affiche le message positif si personne insultant', () => {
     updateGuildData(guildId, { offenses: [] });
     const data = {
       currentStreak: 2,
@@ -134,6 +92,50 @@ describe('generateDailyReport', () => {
       lastCheck: new Date().toISOString()
     };
     const msg = generateDailyReport(data, guildId);
-    expect(msg).toMatch(/Personne n'a encore été insulté/);
+    expect(msg).toMatch(/Personne n'a encore été insultant/);
   });
+});
+
+describe('resetPodium', () => {
+  const guildId = 'test-reset-podium';
+  beforeEach(() => {
+    updateGuildData(guildId, {
+      offenses: [
+        { offender: 'Alice', message: 'insulte1' },
+        { offender: 'Bob', message: 'insulte2' }
+      ],
+      currentStreak: 5,
+      recordStreak: 10
+    });
+  });
+  it('vide le tableau offenses sans toucher au streak', () => {
+    const before = updateGuildData(guildId, {});
+    expect(before.offenses.length).toBe(2);
+    expect(before.currentStreak).toBe(5);
+    resetPodium(guildId);
+    const after = updateGuildData(guildId, {});
+    expect(after.offenses).toEqual([]);
+    expect(after.currentStreak).toBe(5);
+    expect(after.recordStreak).toBe(10);
+  });
+});
+
+it('retourne le top 3 des plus insultants', () => {
+  const guildId = 'test-guild';
+  updateGuildData(guildId, { offenses: [
+    { offender: 'UserA' },
+    { offender: 'UserB' },
+    { offender: 'UserA' },
+    { offender: 'UserC' },
+    { offender: 'UserA' },
+    { offender: 'UserB' },
+  ] });
+  const podium = require('./dataManager').getMostInsulting(guildId, 3);
+  expect(podium.length).toBe(3);
+  expect(podium[0].insulter).toBe('UserA');
+  expect(podium[0].count).toBe(3);
+  expect(podium[1].insulter).toBe('UserB');
+  expect(podium[1].count).toBe(2);
+  expect(podium[2].insulter).toBe('UserC');
+  expect(podium[2].count).toBe(1);
 }); 

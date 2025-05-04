@@ -162,36 +162,14 @@ const removeCustomInsult = (guildId, insult) => {
   return updateGuildData(guildId, updatedData);
 };
 
-// Retourne le podium des utilisateurs les plus insultés pour un serveur
+// Retourne le podium des utilisateurs les plus insultants pour un serveur
 /**
- * Renvoie un tableau trié des utilisateurs les plus insultés (du plus au moins insulté)
+ * Renvoie un tableau trié des utilisateurs les plus insultants (du plus au moins insultant)
  * @param {string} guildId - L'ID du serveur
  * @param {number} [limit=3] - Nombre d'utilisateurs à retourner (par défaut 3)
- * @returns {Array<{offender: string, count: number}>}
- */
-function getMostInsulted(guildId, limit = 3) {
-  const guildData = getGuildData(guildId);
-  if (!guildData || !Array.isArray(guildData.offenses)) return [];
-  const countByUser = {};
-  for (const offense of guildData.offenses) {
-    if (!offense.offender) continue;
-    countByUser[offense.offender] = (countByUser[offense.offender] || 0) + 1;
-  }
-  // Transformer en tableau et trier
-  const sorted = Object.entries(countByUser)
-    .map(([offender, count]) => ({ offender, count }))
-    .sort((a, b) => b.count - a.count)
-    .slice(0, limit);
-  return sorted;
-}
-
-/**
- * Renvoie un tableau trié des utilisateurs qui insultent le plus (du plus au moins insultant)
- * @param {string} guildId - L'ID du serveur
- * @param {number} [limit=10] - Nombre d'utilisateurs à retourner (par défaut 10)
  * @returns {Array<{insulter: string, count: number}>}
  */
-function getMostInsulting(guildId, limit = 10) {
+function getMostInsulting(guildId, limit = 3) {
   const guildData = getGuildData(guildId);
   if (!guildData || !Array.isArray(guildData.offenses)) return [];
   const countByInsulter = {};
@@ -207,6 +185,15 @@ function getMostInsulting(guildId, limit = 10) {
   return sorted;
 }
 
+/**
+ * Réinitialise uniquement le podium (offenses) pour un serveur
+ * @param {string} guildId
+ * @returns {object} Les données mises à jour
+ */
+function resetPodium(guildId) {
+  return updateGuildData(guildId, { offenses: [] });
+}
+
 module.exports = {
   getGuildData,
   updateGuildData,
@@ -215,6 +202,6 @@ module.exports = {
   checkDailyIncrement,
   addCustomInsult,
   removeCustomInsult,
-  getMostInsulted,
-  getMostInsulting
+  getMostInsulting,
+  resetPodium,
 }; 

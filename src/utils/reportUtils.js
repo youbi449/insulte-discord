@@ -25,12 +25,12 @@ function generateDailyReport(guildData, guildId) {
   }
 
   // Ajout du podium
-  const podium = dataManager.getMostInsulted(guildId, 3);
+  const podium = dataManager.getMostInsulting(guildId, 3);
   if (podium.length) {
     message += '\n\n🏆 **Podium des membres les plus insultants :**\n';
     const emojis = ['🥇', '🥈', '🥉'];
     podium.forEach((entry, i) => {
-      message += `\n${emojis[i] || '🔸'} **${entry.offender}** — ${entry.count} insulte${entry.count > 1 ? 's' : ''}`;
+      message += `\n${emojis[i] || '🔸'} **${entry.insulter}** — ${entry.count} insulte${entry.count > 1 ? 's' : ''}`;
     });
     message += '\nCourage à tous, tenez bon !';
   } else {

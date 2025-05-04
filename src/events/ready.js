@@ -2,6 +2,7 @@ const { Events } = require('discord.js');
 const cron = require('node-cron');
 const dataManager = require('../utils/dataManager');
 const { generateDailyReport } = require('../utils/reportUtils');
+const { findBestReportChannel } = require('../utils/fetchUtil');
 
 module.exports = {
   name: Events.ClientReady,
@@ -27,10 +28,8 @@ module.exports = {
         const guildData = dataManager.checkDailyIncrement(guildId);
         // Génère le message de bilan
         const report = generateDailyReport(guildData, guildId);
-        // Cherche le channel par nom
-        const channel = guild.channels.cache.find(
-          c => c.name === 'noinsultchallenge' && c.isTextBased()
-        );
+        // Cherche le meilleur channel pour le bilan
+        const channel = findBestReportChannel(guild);
         if (channel) {
           await channel.send({ content: report });
         }

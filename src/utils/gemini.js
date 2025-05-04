@@ -57,13 +57,11 @@ async function askGemini(prompt) {
     body: JSON.stringify(body),
   });
 
-  // Si rate limit et on n'est pas déjà en fallback, on bascule
-  if (response.status === 429 && !useFallback && FALLBACK_GEMINI_API_KEY) {
+  // Si rate limit et on n'est pas déjà en fallback, on persiste l'état et on retente
+  if (response.status === 429 && !useFallback) {
     state = { useFallback: true, fallbackSince: Date.now() };
     saveFallbackState(state);
-    // On retente avec la clé fallback
-    apiKey = FALLBACK_GEMINI_API_KEY;
-    url = getGeminiUrl(apiKey);
+    // On retente la requête
     response = await fetchFn(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
