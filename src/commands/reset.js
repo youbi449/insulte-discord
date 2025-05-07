@@ -13,15 +13,15 @@ module.exports = {
     )
     .addStringOption(option => 
       option
-        .setName('message')
-        .setDescription('Le message contenant l\'insulte')
-        .setRequired(false)
-    )
-    .addStringOption(option => 
-      option
         .setName('motif')
         .setDescription('Le motif ou l\'insulte prononcée par le responsable')
         .setRequired(true)
+    )
+    .addStringOption(option => 
+      option
+        .setName('message')
+        .setDescription('Le message contenant l\'insulte')
+        .setRequired(false)
     )
     .setDefaultMemberPermissions(PermissionFlagsBits.Administrator),
 
