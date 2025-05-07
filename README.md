@@ -13,7 +13,7 @@ Un bot Discord permettant de suivre et d'encourager une dynamique de non-insulte
 
 1. Clonez ce dépôt
 ```bash
-git clone https://github.com/votre-username/insulte-discord.git
+git clone https://github.com/youbi449/insulte-discord.git
 cd insulte-discord
 ```
 
