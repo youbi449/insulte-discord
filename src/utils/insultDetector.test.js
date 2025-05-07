@@ -111,4 +111,34 @@ describe('Détection d\'insultes (IA)', () => {
     expect(typeof res.punchline).toBe('string');
     expect(res.punchline.length).toBeGreaterThan(5);
   });
+});
+
+describe('Détection de grossièretés (nouvelle consigne)', () => {
+  it('détecte une grossièreté explicite même hors insulte', async () => {
+    const res = await detectInsult("Putain c'est trop bien !", 'test');
+    expect(res.detected).toBe(true);
+    expect(res.insult).toBe('putain');
+  });
+
+  it('détecte une grossièreté stylisée', async () => {
+    const res = await detectInsult('M3rd3 alors !', 'test');
+    expect(res.detected).toBe(true);
+    expect(['merde','m3rd3']).toContain(res.insult);
+  });
+
+  it('ne détecte pas une grossièreté rapportée entre guillemets', async () => {
+    const res = await detectInsult("Il m'a dit \"ferme ta gueule\"", 'test');
+    expect(res.detected).toBe(false);
+  });
+
+  it('ne détecte pas une grossièreté racontée', async () => {
+    const res = await detectInsult("On m'a insulté de \"connard\"", 'test');
+    expect(res.detected).toBe(false);
+  });
+
+  it('détecte une grossièreté hors citation', async () => {
+    const res = await detectInsult('Ferme ta gueule', 'test');
+    expect(res.detected).toBe(true);
+    expect(res.insult).toBe('gueule');
+  });
 }); 

@@ -122,17 +122,23 @@ const incrementStreak = (guildId) => {
   return updateGuildData(guildId, updatedData);
 };
 
-// Vérifier si le compteur doit être incrémenté (nouveau jour)
-const checkDailyIncrement = (guildId) => {
-  const guildData = getGuildData(guildId);
-  const lastCheck = new Date(guildData.lastCheck);
+// Ajoute une fonction utilitaire pour savoir si on peut incrémenter le streak
+function canIncrementStreak(guildData) {
+  // On ne peut incrémenter que si aucune insulte depuis 24h
+  const lastReset = new Date(guildData.lastReset);
   const now = new Date();
-  
-  // Si on est un jour différent de la dernière vérification
-  if (lastCheck.toDateString() !== now.toDateString()) {
+  // Si streak à 0, on ne fait rien
+  if (guildData.currentStreak === 0) return false;
+  // On vérifie si 24h se sont écoulées depuis la dernière insulte
+  return (now - lastReset) >= 24 * 3600 * 1000;
+}
+
+// Nouvelle version : incrémente le streak seulement si 24h après la dernière insulte
+const checkStreakAfter24h = (guildId) => {
+  const guildData = getGuildData(guildId);
+  if (canIncrementStreak(guildData)) {
     return incrementStreak(guildId);
   }
-  
   return guildData;
 };
 
@@ -199,7 +205,7 @@ module.exports = {
   updateGuildData,
   resetStreak,
   incrementStreak,
-  checkDailyIncrement,
+  checkStreakAfter24h,
   addCustomInsult,
   removeCustomInsult,
   getMostInsulting,

@@ -10,7 +10,7 @@ module.exports = {
   async execute(interaction) {
     // S'assurer de vérifier si un jour est passé pour incrémenter le compteur
     const guildId = interaction.guild.id;
-    const guildData = dataManager.checkDailyIncrement(guildId);
+    const guildData = dataManager.checkStreakAfter24h(guildId);
     const message = generateDailyReport(guildData, guildId);
     
     await interaction.reply({ content: message });

@@ -138,4 +138,35 @@ it('retourne le top 3 des plus insultants', () => {
   expect(podium[1].count).toBe(2);
   expect(podium[2].insulter).toBe('UserC');
   expect(podium[2].count).toBe(1);
+});
+
+describe('Streak incrémenté seulement 24h après la dernière insulte', () => {
+  const guildId = 'test-streak-24h';
+  beforeEach(() => {
+    // Reset avec une insulte il y a 23h
+    const now = new Date();
+    const lastReset = new Date(now.getTime() - 23 * 3600 * 1000).toISOString();
+    updateGuildData(guildId, {
+      currentStreak: 1,
+      lastReset,
+      lastCheck: now.toISOString(),
+    });
+  });
+  it('ne doit PAS incrémenter le streak avant 24h', () => {
+    const before = require('./dataManager').getGuildData(guildId).currentStreak;
+    const data = require('./dataManager').checkStreakAfter24h(guildId);
+    expect(data.currentStreak).toBe(before);
+  });
+  it('doit incrémenter le streak après 24h', () => {
+    // Simule une insulte il y a 25h
+    const now = new Date();
+    const lastReset = new Date(now.getTime() - 25 * 3600 * 1000).toISOString();
+    updateGuildData(guildId, {
+      currentStreak: 1,
+      lastReset,
+      lastCheck: now.toISOString(),
+    });
+    const data = require('./dataManager').checkStreakAfter24h(guildId);
+    expect(data.currentStreak).toBe(2);
+  });
 }); 

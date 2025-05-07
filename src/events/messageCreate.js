@@ -45,8 +45,7 @@ module.exports = {
         logError("Erreur lors de l'envoi du message de réponse", error);
       }
     } else {
-      // Vérifier et incrémenter le streak si un nouveau jour est passé
-      dataManager.checkDailyIncrement(message.guild.id);
+      // Ne rien faire ici, l'incrémentation se fait désormais ailleurs
     }
   },
 };

@@ -24,12 +24,19 @@ module.exports = {
     cron.schedule('0 0 * * *', async () => {
       for (const guild of client.guilds.cache.values()) {
         const guildId = guild.id;
-        // Incrémente le streak si besoin
-        const guildData = dataManager.checkDailyIncrement(guildId);
-        // Génère le message de bilan
+        const guildData = dataManager.getGuildData(guildId);
         const report = generateDailyReport(guildData, guildId);
-        // Cherche le meilleur channel pour le bilan
-        const channel = findBestReportChannel(guild);
+        let channel = null;
+        if (process.env.CHANNEL_ID) {
+          try {
+            channel = await guild.channels.fetch(process.env.CHANNEL_ID);
+          } catch (e) {
+            channel = null;
+          }
+        }
+        if (!channel) {
+          channel = findBestReportChannel(guild);
+        }
         if (channel) {
           await channel.send({ content: report });
         }
