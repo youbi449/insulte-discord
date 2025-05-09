@@ -200,6 +200,22 @@ function resetPodium(guildId) {
   return updateGuildData(guildId, { offenses: [] });
 }
 
+/**
+ * Supprime une offense par son index dans la liste des offenses d'un serveur
+ * @param {string} guildId
+ * @param {number} offenseIndex
+ * @returns {object} Les données mises à jour
+ */
+function removeOffense(guildId, offenseIndex) {
+  const guildData = getGuildData(guildId);
+  if (!Array.isArray(guildData.offenses) || offenseIndex < 0 || offenseIndex >= guildData.offenses.length) {
+    return guildData;
+  }
+  const updatedOffenses = guildData.offenses.slice();
+  updatedOffenses.splice(offenseIndex, 1);
+  return updateGuildData(guildId, { offenses: updatedOffenses });
+}
+
 module.exports = {
   getGuildData,
   updateGuildData,
@@ -210,4 +226,5 @@ module.exports = {
   removeCustomInsult,
   getMostInsulting,
   resetPodium,
+  removeOffense,
 }; 

@@ -1,4 +1,4 @@
-const { getMostInsulted, updateGuildData, getMostInsulting, resetPodium } = require('./dataManager');
+const { getMostInsulted, updateGuildData, getMostInsulting, resetPodium, removeOffense } = require('./dataManager');
 const { generateDailyReport } = require('./reportUtils');
 
 describe('getMostInsulting', () => {
@@ -7,7 +7,7 @@ describe('getMostInsulting', () => {
     updateGuildData(guildId, {
       offenses: [
         { offender: 'Alice', message: 'insulte1' },
-        { offender: 'Bob', message: 'insulte2' },
+        { offender: 'Bobnode ', message: 'insulte2' },
         { offender: 'Alice', message: 'insulte3' },
         { offender: 'Charlie', message: 'insulte4' },
         { offender: 'Bob', message: 'insulte5' },
@@ -168,5 +168,36 @@ describe('Streak incrémenté seulement 24h après la dernière insulte', () => 
     });
     const data = require('./dataManager').checkStreakAfter24h(guildId);
     expect(data.currentStreak).toBe(2);
+  });
+});
+
+describe('removeOffense', () => {
+  it('supprime une offense par son index', () => {
+    const guildId = 'test-guild-remove';
+    // Prépare des offenses fictives
+    updateGuildData(guildId, { offenses: [
+      { offender: 'A', message: 'insulte1' },
+      { offender: 'B', message: 'insulte2' },
+      { offender: 'C', message: 'insulte3' }
+    ] });
+    const before = getGuildData(guildId);
+    expect(before.offenses.length).toBe(3);
+    // Supprime l'index 1
+    removeOffense(guildId, 1);
+    const after = getGuildData(guildId);
+    expect(after.offenses.length).toBe(2);
+    expect(after.offenses[0].message).toBe('insulte1');
+    expect(after.offenses[1].message).toBe('insulte3');
+  });
+  it('ne fait rien si index invalide', () => {
+    const guildId = 'test-guild-remove-invalid';
+    updateGuildData(guildId, { offenses: [
+      { offender: 'A', message: 'insulte1' }
+    ] });
+    const before = getGuildData(guildId);
+    removeOffense(guildId, 5);
+    const after = getGuildData(guildId);
+    expect(after.offenses.length).toBe(1);
+    expect(after.offenses[0].message).toBe('insulte1');
   });
 }); 
