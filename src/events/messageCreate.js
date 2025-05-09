@@ -38,7 +38,7 @@ module.exports = {
       // Mentionner l'utilisateur et ajouter la punchline
       try {
         await message.reply({
-          content: `⚠️ Insulte détectée par <@${message.author.id}> ! Le compteur de jours sans insulte a été réinitialisé à 0.\n${result.punchline || 'On compte sur toi pour faire mieux la prochaine fois !'}`,
+          content: `⚠️ Insulte détectée par <@${message.author.id}> ! Le compteur de jours sans insulte a été réinitialisé à 0.\n${result.punchline || 'On compte sur toi pour faire mieux la prochaine fois !'}\n\n_Motif IA : ${result.reason || 'Non précisé.'}_`,
           ephemeral: false,
         });
       } catch (error) {
