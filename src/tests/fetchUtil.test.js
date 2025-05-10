@@ -1,4 +1,4 @@
-const { findBestReportChannel } = require('./fetchUtil');
+const { findBestReportChannel } = require('../utils/fetchUtil');
 
 describe('findBestReportChannel', () => {
   function mockChannel(name, perms = true) {

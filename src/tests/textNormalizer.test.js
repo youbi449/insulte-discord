@@ -1,4 +1,4 @@
-const { normalizeText } = require('./textNormalizer');
+const { normalizeText } = require('../utils/textNormalizer');
 
 describe('normalizeText', () => {
   it('normalise une insulte stylisée avec espaces et caractères spéciaux', () => {

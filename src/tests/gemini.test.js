@@ -2,7 +2,7 @@ jest.mock('cross-fetch');
 const fetch = require('cross-fetch');
 const fs = require('fs');
 const path = require('path');
-const { askGemini } = require('./gemini');
+const { askGemini } = require('../utils/gemini');
 
 const fallbackStatePath = path.join(__dirname, '../data/gemini_fallback.json');
 

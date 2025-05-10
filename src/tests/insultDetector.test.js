@@ -1,4 +1,4 @@
-const { detectInsult } = require('./insultDetector');
+const { detectInsult } = require('../utils/insultDetector');
 
 jest.mock('./gemini', () => ({
   askGemini: jest.fn(async (prompt) => {

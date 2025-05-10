@@ -1,5 +1,5 @@
-const { getMostInsulted, updateGuildData, getMostInsulting, resetPodium, removeOffense } = require('./dataManager');
-const { generateDailyReport } = require('./reportUtils');
+const { getMostInsulted, updateGuildData, getMostInsulting, resetPodium, removeOffense } = require('../utils/dataManager');
+const { generateDailyReport } = require('../utils/reportUtils');
 
 describe('getMostInsulting', () => {
   const guildId = 'test-guild-insulting';
@@ -130,7 +130,7 @@ it('retourne le top 3 des plus insultants', () => {
     { offender: 'UserA' },
     { offender: 'UserB' },
   ] });
-  const podium = require('./dataManager').getMostInsulting(guildId, 3);
+  const podium = require('../utils/dataManager').getMostInsulting(guildId, 3);
   expect(podium.length).toBe(3);
   expect(podium[0].insulter).toBe('UserA');
   expect(podium[0].count).toBe(3);
@@ -153,8 +153,8 @@ describe('Streak incrémenté seulement 24h après la dernière insulte', () => 
     });
   });
   it('ne doit PAS incrémenter le streak avant 24h', () => {
-    const before = require('./dataManager').getGuildData(guildId).currentStreak;
-    const data = require('./dataManager').checkStreakAfter24h(guildId);
+    const before = require('../utils/dataManager').getGuildData(guildId).currentStreak;
+    const data = require('../utils/dataManager').checkStreakAfter24h(guildId);
     expect(data.currentStreak).toBe(before);
   });
   it('doit incrémenter le streak après 24h', () => {
@@ -166,7 +166,7 @@ describe('Streak incrémenté seulement 24h après la dernière insulte', () => 
       lastReset,
       lastCheck: now.toISOString(),
     });
-    const data = require('./dataManager').checkStreakAfter24h(guildId);
+    const data = require('../utils/dataManager').checkStreakAfter24h(guildId);
     expect(data.currentStreak).toBe(2);
   });
 });
